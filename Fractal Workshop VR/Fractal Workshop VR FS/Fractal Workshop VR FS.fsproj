@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <UseStandardResourceNames>true</UseStandardResourceNames>
-    <Name>Fractal Workshop VR</Name>
+    <Name>Fractal Workshop VR FS</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,8 +47,12 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Common.fs" />
     <Compile Include="Environment.fs" />
     <Compile Include="CompanionWindow.fs" />
+    <Compile Include="CopyEngine.fs" />
+    <Compile Include="RenderEngine.fs" />
+    <Compile Include="ComputeEngine.fs" />
     <Compile Include="RenderContext.fs" />
     <Compile Include="ExecutionProc.fs" />
     <Compile Include="Program.fs" />

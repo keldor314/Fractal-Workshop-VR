@@ -5,6 +5,8 @@ open SharpDX
 open SharpDX.Direct3D12
 open SharpDX.DXGI
 
+open Common
+
 let HMD = 
     let error = ref EVRInitError.None
     let hmd = OpenVR.Init(error, EVRApplicationType.VRApplication_Scene)
@@ -40,28 +42,31 @@ let Devices =
     let adapters = factory.Adapters1
     let devices = 
         adapters
-        |> Array.mapi (fun i adapter -> (adapter,i))
-        |> Array.filter (fun (adapter,i) ->
-            if adapter.Description.Description = "Microsoft Basic Render Driver" then false else true)
-        |> Array.partition (fun (_,i) ->
-            if (i = !hmdAdapterIndex) then true else false)
-        |> (fun (primary,secondary) -> Array.concat [primary; secondary])
-        |> Array.map (fun (adapter,i) ->
-            new Direct3D12.Device(adapter, Direct3D.FeatureLevel.Level_12_0))
-    adapters |> Array.iter (fun adapter -> adapter.Dispose())
+        |> Array.mapi (fun i adapter     ->  (adapter,i))
+        |> Array.filter (fun (adapter,i) ->  adapter.Description.Description <> "Microsoft Basic Render Driver")
+        |> Array.partition (fun (_,i)    ->  i = !hmdAdapterIndex)
+        |> (fun (primary,secondary)      ->  Array.concat [primary; secondary])
+        |> Array.map (fun (adapter,i)    ->  new Direct3D12.Device(adapter, Direct3D.FeatureLevel.Level_12_0))
+    adapters |> Array.iter (fun adapter -> ~~adapter)
     devices
 
-
 let GraphicsQueue =
-    let mutable queueDesc = new Direct3D12.CommandQueueDescription(CommandListType.Direct)
+    let mutable queueDesc = new CommandQueueDescription(CommandListType.Direct)
     queueDesc.Priority <- int CommandQueuePriority.High
     Devices.[0].CreateCommandQueue queueDesc
 
 let ComputeQueues =
     Devices
     |> Array.map (fun device ->
-        let mutable queueDesc = new Direct3D12.CommandQueueDescription(CommandListType.Compute)
+        let mutable queueDesc = new CommandQueueDescription(CommandListType.Compute)
         queueDesc.Priority <- int CommandQueuePriority.Normal
+        device.CreateCommandQueue queueDesc )
+
+let CopyQueues =
+    Devices
+    |> Array.map (fun device ->
+        let mutable queueDesc = new CommandQueueDescription(CommandListType.Copy)
+        queueDesc.Priority <- int CommandQueuePriority.High
         device.CreateCommandQueue queueDesc )
 
 let SwapChain =
@@ -71,7 +76,7 @@ let SwapChain =
                 new ModeDescription(
                     Width = int companionWindowWidth,
                     Height = int companionWindowHeight,
-                    Format = Format.B8G8R8A8_UNorm),
+                    Format = Format.R16G16B16A16_Float),
                 SampleDescription = new SampleDescription(
                     Count = 1,
                     Quality = 0),
@@ -82,12 +87,10 @@ let SwapChain =
                 IsWindowed = Mathematics.Interop.RawBool true )
     new SwapChain (factory, GraphicsQueue, desc)
 
-()
-
 
 
 let Shutdown () =
-    let (~~) (item:DisposeBase) = if item <> null then item.Dispose()
+    for queue in CopyQueues do ~~queue
     for queue in ComputeQueues do ~~queue
     ~~GraphicsQueue
     for device in Devices do ~~device

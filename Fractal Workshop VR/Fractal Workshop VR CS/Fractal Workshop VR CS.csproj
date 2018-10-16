@@ -56,6 +56,10 @@
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Compile Include="Common\LocalEnvironment.cs" />
+    <Compile Include="Renderer\Engine.cs" />
+    <Compile Include="Renderer\InitDestroy.cs" />
+    <Compile Include="VR\Control.cs" />
     <Page Include="Companion Window\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,9 +110,6 @@
       <Name>OpenVRApiModule</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Renderer\" />
-    <Folder Include="VR\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

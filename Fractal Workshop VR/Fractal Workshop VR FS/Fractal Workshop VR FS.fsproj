@@ -85,7 +85,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenVRApiModule\OpenVRApiModule.csproj">
       <Name>OpenVRApiModule</Name>
-      <Project>{9886ad58-b95c-44e9-9272-6b4ac8c7e0c5}</Project>
+      <Project>{2cecf67b-da05-406a-ae20-7badd71db9fe}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

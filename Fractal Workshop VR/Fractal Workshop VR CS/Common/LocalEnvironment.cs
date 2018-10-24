@@ -10,9 +10,10 @@ namespace Fractal_Workshop_VR_CS.Common
     {
         public const bool DxDebug =
 #if DEBUG
-                true;
+            true;
 #else
-                false;
+            false;
 #endif
+        public static bool VREnabled = VR.Control.isVRPresent();
     }
 }
